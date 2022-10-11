@@ -1,0 +1,91 @@
+version: '3.3'
+
+
+services:
+  node-app:
+    container_name: node-app
+    build: 
+      context: .
+      args:
+        NODE_ENV: development
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    networks:
+      - app-network
+
+
+
+  webserver:
+      container_name: webserver
+      image: nginx:stable-alpine
+      ports:
+        - 80:80
+      restart: unless-stopped
+      networks:
+        - app-network
+      depends_on:
+        - node-app
+      volumes:
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+        - ./nginx/logs:/var/log/nginx
+        # - web-root:/var/www/html
+
+
+
+  db:
+    build: 
+      context: ./src/data
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    command: --init-file ./src/db_init.sql
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - db-data:/var/lib/mysql
+        
+  # db:
+  #   container_name: paragon_db
+  #   image: mysql:8.0
+  #   command: 
+  #     --default-authentication-plugin=mysql_native_password
+  #     --init-file ./src/data/db_init.sql
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     - node-app
+  #   volumes:
+  #     - ./src/data/db_init.sql:/docker-entrypoint-initdb.d/
+  #     - mysql-data:/var/lib/mysql
+    
+  # phpmyadmin:
+  #   container_name: sql_admin
+  #   image: phpmyadmin:5.2.0-apache
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     - db  
+  
+  
+volumes:
+#   web-root:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       device: /home/ubuntu/paragon-docker/src/
+#       o: bind
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge

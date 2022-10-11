@@ -1,0 +1,95 @@
+version: '3.7'
+
+services:
+  
+  node-app:
+    container_name: node-app
+    build: 
+      context: .
+      args:
+        NODE_ENV: development
+    environment:
+      - NODE_ENV=development
+
+    command: npm run dev
+    networks:
+      - app-network
+    volumes:
+      - ./src:/app/src:ro
+
+  webserver:
+      container_name: webserver
+      image: nginx:stable-alpine
+      ports:
+        - 80:80
+      restart: unless-stopped
+      networks:
+        - app-network
+      depends_on:
+        - node-app
+      volumes:
+        - ./nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
+        - ./nginx/logs:/var/log/nginx
+        # - web-root:/var/www/html
+
+  # mariadb:
+  #   build: ./src/data/
+  #   container_name: mariadb
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: 'paragon'
+  #     MYSQL_USER: 'user'
+  #     MYSQL_PASSWORD: 'password'
+  #     MYSQL_ROOT_PASSWORD: 'password'
+  #   ports:
+  #     - '3306:3306'
+  #   expose:
+  #     - '3306'
+  #     - '33060'
+  #   volumes:
+  #     - ./src/data/mariadb:/var/lib/mysql
+  #   networks:
+  #     - app-network
+
+  sql:
+    build: ./src/sql/
+    container_name: sql
+    restart: unless-stopped
+    command: --max_allowed_packet=32505856
+    environment:
+      MYSQL_DATABASE: 'paragon'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+      - '33060'
+    volumes:
+      - ./src/sql/mysql:/var/lib/mysql
+    networks:
+      - app-network
+
+  admin:
+    image: phpmyadmin:fpm-alpine
+    container_name: admin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: sql
+      PMA_USER: root
+      PMA_PASSWORD: password
+    ports:
+      - '8080:80'
+    depends_on:
+      - sql
+    networks:
+      - app-network
+
+
+volumes:
+  data:
+
+networks:
+  app-network:
+    
