@@ -1,0 +1,9 @@
+[api]
+	insecure = true
+[entryPoints]
+	[entryPoints.web]
+		address = ":80"
+[providers]
+	[providers.docker]
+		exposedByDefault = false
+		network = "proxy"

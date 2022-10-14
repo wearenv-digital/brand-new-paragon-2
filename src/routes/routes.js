@@ -2,7 +2,7 @@ const express = require('express');
 var router = express.Router();
 const processing = require('../controller/processing');
 const controllers = require('../controller/controllers');
-
+var logger = require('../services/logger');
 const path = require('path');
 
 router.use(function timeLog(req, res, next) {
@@ -14,8 +14,27 @@ router.get('/', (req, res) => {
 	res.render('index.ejs');
 });
 
+// router.get('/product-page/:product_code', (req, res) => {
+// 	if (!req.params || req.params == undefined) {
+// 		res.send('<h1>NOPE</h1>');
+// 	} else {
+// 		data = processing.getData(req);
+// 		res.send({
+// 			features: data.features,
+// 			dataObj: data.finalObj,
+// 			dataArr: data.dataArr,
+// 			description: data.description
+// 		});
+// 		console.log(data);
+// 	}
+// });
+
 router.get('/product-page', (req, res) => {
-	var data = processing.processAll();
+	try {
+		var data = controllers.getAll();
+	} catch (error) {
+		logger.customLogger.log('debug', 'route error', error);
+	}
 	res.send(data);
 });
 
@@ -330,24 +349,22 @@ router.get('/resources/press', (req, res) => {
 // 	}
 // });
 
-// router.get(
-// 	'/product-page/:product_code',
-// 	(processing.getData = (req, res) => {
-// 		if (!req.params || req.params == undefined) {
-// 			res.render('new');
-// 		} else {
-// 			res.send(data);
-// 			// res.render('product-page-with-partials', {
-// 			// 	description: description,
-// 			// 	specs: finalSpecs,
-// 			// 	data: data,
-// 			// 	av: finalAv,
-// 			// 	auto: finalAutomation,
-// 			// 	elecPhys: finalElecPhys
-// 			// });
-// 			console.log(data.finalSpecs);
-// 		}
-// 	})
-// );
+// router.get('/product-page/:product_code', (req, res) => {
+// 	if (!req.params || req.params == undefined) {
+// 		res.render('new');
+// 	} else {
+// 		var data = processing.getData(req);
+// 		res.send(data);
+// 		// res.render('product-page-with-partials', {
+// 		// 	description: description,
+// 		// 	specs: finalSpecs,
+// 		// 	data: data,
+// 		// 	av: finalAv,
+// 		// 	auto: finalAutomation,
+// 		// 	elecPhys: finalElecPhys
+// 		// });
+// 		console.log(data.finalSpecs);
+// 	}
+// });
 
 module.exports = router;

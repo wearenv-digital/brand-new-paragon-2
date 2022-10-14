@@ -1,12 +1,18 @@
-const express = require('express');
 const controllers = require('./controllers');
-const app = express();
 
 async function processAll(req, res) {
-	var camInfo = await controllers.getAll(req);
-	camInfo = Object.values(camInfo);
+	try {
+		const data = await controllers.getAll();
 
-	console.log(camInfo);
+		return data;
+	} catch (error) {}
+}
+
+async function getAllData(req) {
+	var data = await controllers.getAll();
+	var dataObject = {};
+	data = dataObject;
+	return dataObject;
 }
 
 async function getData(req) {
@@ -312,5 +318,6 @@ async function getData(req) {
 
 module.exports = {
 	getData,
-	processAll
+	processAll,
+	getAllData
 };
