@@ -1,3 +1,4 @@
+const { query } = require('express');
 const mysql = require('mysql');
 require('dotenv').config();
 var logger = require('../services/logger');
@@ -13,28 +14,43 @@ const pool = mysql.createPool({
 	connectionLimit: 10
 });
 
-async function dbConnect() {
-	pool.getConnection((err, connection) => {
-		if (err) throw err;
-		console.log(`database connected with ID ${connection.threadId}`);
-		connection.release();
+
+
+let dbResults = {};
+// const sqlQuery = `SELECT * FROM cam_info`;
+
+dbResults.all = () => {
+	return new Promise((resolve, reject) => {
+		const sqlQuery = `SELECT * FROM cam_info`;
+
+		pool.query(sqlQuery, (err, results) => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(results);
+		});
+	});
+};
+
+dbResults.id = (prodCode) => {
+	return new Promise((resolve, reject) => {
+		const sqlQuery = `SELECT * FROM cam_info WHERE product_code = ?`;
+
+		pool.query(sqlQuery,[prodCode], (err, results) => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(results);
+		});
 	});
 }
 
-// const getCircularReplacer = () => {
-// 	const seen = new WeakSet();
-// 	return (key, value) => {
-// 		if (typeof value === 'object' && value !== null) {
-// 			if (seen.has(value)) {
-// 				return;
-// 			}
-// 			seen.add(value);
-// 		}
-// 		return value;
-// 	};
-// };
 
-// console.log(JSON.stringify(pool, getCircularReplacer()));
 
-module.exports = pool;
-module.exports = dbConnect;
+
+
+module.exports = dbResults
+
+
+// module.exports = pool;
+// module.exports = dbConnect;

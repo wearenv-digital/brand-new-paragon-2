@@ -1,6 +1,8 @@
 const express = require('express');
 var router = express.Router();
 const processing = require('../controller/processing');
+const db = require('../controller/dbConnector');
+
 const controllers = require('../controller/controllers');
 var logger = require('../services/logger');
 const path = require('path');
@@ -14,25 +16,26 @@ router.get('/', (req, res) => {
 	res.render('index.ejs');
 });
 
-// router.get('/product-page/:product_code', (req, res) => {
-// 	if (!req.params || req.params == undefined) {
-// 		res.send('<h1>NOPE</h1>');
-// 	} else {
-// 		data = processing.getData(req);
-// 		res.send({
-// 			features: data.features,
-// 			dataObj: data.finalObj,
-// 			dataArr: data.dataArr,
-// 			description: data.description
-// 		});
-// 		console.log(data);
+router.get('/product-page', async (req, res) => {
+	try {
+		let results = await controllers.getAll();
+		res.json(results);
+	} catch (e) {
+		console.log(e);
+		return res.sendStatus(500);
+	}
+});
+
+// Do not delete!
+// router.get('/product-page', async (req, res, next) => {
+// 	try {
+// 		let results = await db.all();
+// 		return res.json(results);
+// 	} catch (e) {
+// 		console.log(e);
+// 		return res.sendStatus(500);
 // 	}
 // });
-
-router.get('/product-page', async (req, res) => {
-	var data = await controllers.getAll();
-	res.send(data);
-});
 
 router.get('/layout', (req, res) => {
 	res.render('layout');
