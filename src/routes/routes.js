@@ -29,12 +29,8 @@ router.get('/', (req, res) => {
 // 	}
 // });
 
-router.get('/product-page', (req, res) => {
-	try {
-		var data = controllers.getAll();
-	} catch (error) {
-		logger.customLogger.log('debug', 'route error', error);
-	}
+router.get('/product-page', async (req, res) => {
+	var data = await controllers.getAll();
 	res.send(data);
 });
 
@@ -202,6 +198,14 @@ router.get(
 router.get('/products/access-control/door-controllers', (req, res) => {
 	res.render('door-controllers-collection');
 });
+
+router.get('/products/access-control/wireless-locks', (req, res) => {
+	res.render('wireless-locks');
+});
+
+// router.get('/products/access-control/wireless-locks', (req, res) => {
+// 	res.render('wireless-locks');
+// });
 
 router.get('/products/access-control/access-control-software', (req, res) => {
 	res.render('access-control-software-collection');

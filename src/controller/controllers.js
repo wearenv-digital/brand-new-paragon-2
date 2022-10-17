@@ -1,35 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 var util = require('util');
-var { pool, pooledConnection } = require('./dbConnector');
+var pool = require('./dbConnector');
 const logger = require('../services/logger');
+const dbConnect = require('./dbConnector');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// async function getAll() {
-// 	const result = await pooledConnection(async (connection) => {
-// 		const rows = await new Promise((resolve, reject) => {
-// 			connection.query('SELECT * FROM cam_info', (ex, rows) => {
-// 				if (ex) {
-// 					reject(ex);
-// 				} else {
-// 					resolve(rows);
-// 				}
-// 			});
-// 		});
-// 		return rows[0].value;
-// 	});
-// 	return result;
-// }
-
 async function getAll() {
-	var connection = await util.promisify(pool.getConnection.bind(pool))();
-	console.log(`connected as id ${connection.threadId}`);
-	logger.customLogger.log('debug', 'await-connection', 'connection');
-	var rows = await connection.query.bind(connection)('SELECT * FROM cam_features');
+	const connection = await dbConnect();
+
+	try {
+		var rows = connection.query(error, data);
+		return data;
+	} catch {
+		console.log(error);
+	}
 	var result;
-	logger.customLogger.log('error', 'result:', result);
 	Object.keys(rows).forEach(function (key) {
 		result = rows[key];
 		// console.log(result);
