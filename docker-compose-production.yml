@@ -28,7 +28,7 @@ services:
     container_name: webserver
     image: httpd:latest
     ports:
-      - 80:80
+      - 8080:80
 
     # Traefik Stuff
     labels:
