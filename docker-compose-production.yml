@@ -16,7 +16,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-proxy
-      - traefik.http.routers.node-app.rule=Host(`localhost`)
+      - traefik.http.routers.node-app.rule=Host(`http://3.11.230.233/`)
       - traefik.hhtp.services.node-app.loadbalancer.server.port=3030
     networks:
       - traefik-proxy
@@ -67,7 +67,7 @@ services:
     networks:
       - traefik-proxy
 
-  ssshtunnel:
+  sshtunnel:
     restart: always
     image: ghcr.io/linuxserver/openssh-server
     container_name: sshtunnel
@@ -115,10 +115,10 @@ services:
   #     - backend
 
     # Traefik Stuff
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-proxy
-      - traefik.http.routers.paragon-dba.rule=Host(`dba.localhost`)
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.docker.network=traefik-proxy
+    #   - traefik.http.routers.paragon-dba.rule=Host(`dba.localhost`)
 
 volumes:
   data:

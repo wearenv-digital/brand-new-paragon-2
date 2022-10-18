@@ -39,6 +39,7 @@ services:
       - traefik.port=80
     volumes:
       - ./apache/conf/httpd.conf:/conf/httpd.conf
+      - ./apache/conf/httpd-prod.conf:/httpd-prod.conf
     networks:
       - traefik-proxy
       - backend
@@ -67,7 +68,7 @@ services:
     networks:
       - traefik-proxy
 
-  ssshtunnel:
+  sshtunnel:
     restart: always
     image: ghcr.io/linuxserver/openssh-server
     container_name: sshtunnel
