@@ -14,8 +14,6 @@ const pool = mysql.createPool({
 	connectionLimit: 10
 });
 
-
-
 let dbResults = {};
 // const sqlQuery = `SELECT * FROM cam_info`;
 
@@ -32,25 +30,21 @@ dbResults.all = () => {
 	});
 };
 
+// LETS TRY AND MAKE THIS REUSABLE
 dbResults.id = (prodCode) => {
 	return new Promise((resolve, reject) => {
 		const sqlQuery = `SELECT * FROM cam_info WHERE product_code = ?`;
 
-		pool.query(sqlQuery,[prodCode], (err, results) => {
+		pool.query(sqlQuery, [prodCode], (err, results) => {
 			if (err) {
 				return reject(err);
 			}
 			return resolve(results);
 		});
 	});
-}
+};
 
-
-
-
-
-module.exports = dbResults
-
+module.exports = dbResults;
 
 // module.exports = pool;
 // module.exports = dbConnect;

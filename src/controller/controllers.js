@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-var util = require('util');
-const logger = require('../services/logger');
+// var util = require('util');
+// const logger = require('../services/logger');
 const db = require('./dbConnector');
 const { json } = require('body-parser');
 const { response } = require('express');
@@ -9,6 +9,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// THIS WORKS
 async function getAll() {
 	try {
 		let results = await db.all();
@@ -21,6 +22,7 @@ async function getAll() {
 	}
 }
 
+// THIS NEEDS WORK
 async function getInfo(req) {
 	try {
 		let results = await db.all();
